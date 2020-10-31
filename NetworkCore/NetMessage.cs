@@ -15,6 +15,9 @@ namespace Core.Network
         public readonly string ReceivePlugin;
 
         [JsonInclude]
+        public bool GetRequest = false;
+
+        [JsonInclude]
         public readonly string Value;
 
         public NetMessage()
