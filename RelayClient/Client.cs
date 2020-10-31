@@ -47,6 +47,9 @@ namespace RelayClient
 
             Anima.Instance.KnowledgePool.TryGetValue("Server-IP", out string IP);
             serverAddress =  IPAddress.Parse(IP);
+
+            Anima.Instance.KnowledgePool.TryGetValue("Server-Port", out int Port);
+            this.port = Port;
         }
 
         public override void Tick()
