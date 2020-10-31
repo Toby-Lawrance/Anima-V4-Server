@@ -67,7 +67,7 @@ namespace RelayClient
                 }
                 catch (Exception e)
                 {
-                    Anima.Instance.ErrorStream.WriteLine($"Could not deserialize a message: {m}");
+                    Anima.Instance.ErrorStream.WriteLine($"Could not deserialize a message: {m} {Anima.NewLineChar}because: {e.Message}");
                 }
             }
 
