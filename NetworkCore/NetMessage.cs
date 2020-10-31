@@ -23,6 +23,7 @@ namespace Core.Network
         public NetMessage()
         {
             SendHost = Environment.MachineName;
+            GetRequest = true;
         }
 
         public NetMessage(string receiveHost, string sendPlugin, string receivePlugin, string value)

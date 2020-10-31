@@ -104,9 +104,5 @@ namespace RelayServer
             return;
         }
 
-        public override void Close()
-        {
-            base.Close();
-        }
     }
 }

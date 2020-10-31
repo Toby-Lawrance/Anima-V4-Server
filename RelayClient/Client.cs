@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using Core;
 using Core.Network;
@@ -10,6 +12,7 @@ namespace RelayClient
     public class Client : Module
     {
         private int port;
+        private IPAddress serverAddress;
 
         public Client() : base("Relay-Client","Client side of server setup",5) {}
 
@@ -41,16 +44,61 @@ namespace RelayClient
 
             Anima.Instance.KnowledgePool.TryGetValue("Server-Ping-Rate", out TimeSpan rate);
             this.TickDelay = rate;
+
+            Anima.Instance.KnowledgePool.TryGetValue("Server-IP", out string IP);
+            serverAddress =  IPAddress.Parse(IP);
         }
 
         public override void Tick()
         {
-            throw new NotImplementedException();
+            Message m;
+            var messageReference = new List<Message>();
+            var serverPayload = new List<NetMessage>();
+            while ((m = Anima.Instance.MailBoxes.GetMessage(this)) is not null)
+            {
+                try
+                {
+                    messageReference.Add(m);
+                    var nm = Anima.Deserialize<NetMessage>(m.Value);
+                    serverPayload.Add(nm);
+                }
+                catch (Exception e)
+                {
+                    Anima.Instance.ErrorStream.WriteLine($"Could not deserialize a message: {m}");
+                }
+            }
+
+            var GetRequest = new NetMessage();
+            serverPayload.Add(GetRequest);
+
+            var payload = serverPayload.ToArray();
+            var serializedPayload = Anima.Serialize(payload);
+            var tcpClient = Helper.TryConnectClient(serverAddress, port);
+            var t = Helper.TrySendMessage(tcpClient, serializedPayload);
+            t.Wait();
+
+            if (!t.Result.Item1)
+            {
+                //If we couldn't send them, we need to put them back for later
+                foreach (var msg in messageReference)
+                {
+                    Anima.Instance.MailBoxes.PostMessage(msg);
+                }
+                return;
+            }
+
+            var replyReader = new StreamReader(tcpClient.GetStream());
+            var reply = Helper.ReadFromStreamUntilEnd(replyReader);
+            var messageQueue = Anima.Deserialize<Queue<NetMessage>>(reply);
+
+            foreach (var message in messageQueue)
+            {
+                var msg = new Message(message.SendPlugin, message.ReceivePlugin, "Remote", message.Value);
+                Anima.Instance.MailBoxes.PostMessage(msg);
+            }
+
+            tcpClient.Close();
         }
 
-        public override void Close()
-        {
-            base.Close();
-        }
     }
 }
