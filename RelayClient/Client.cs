@@ -14,14 +14,14 @@ namespace RelayClient
         private int port;
         private IPAddress serverAddress;
 
-        public Client() : base("Relay-Client","Client side of server setup",5) {}
+        public Client() : base("Relay-Client","Client side of server setup",30) {}
 
         public override void Init()
         {
             base.Init();
             var succ = Anima.Instance.KnowledgePool.TryInsertValue("Server-Port", 0);
             var succ2 = Anima.Instance.KnowledgePool.TryInsertValue("Server-IP", "");
-            var succ3 = Anima.Instance.KnowledgePool.TryInsertValue("Server-Ping-Rate", TimeSpan.FromSeconds(5));
+            var succ3 = Anima.Instance.KnowledgePool.TryInsertValue("Server-Ping-Rate", 30);
             if (succ)
             {
                 Anima.Instance.WriteLine("Added concept of Server-Port to pool, likely needs to be set");
@@ -42,11 +42,19 @@ namespace RelayClient
                 Anima.Instance.ErrorStream.WriteLine("IPv6 is not supported");
             }
 
-            Anima.Instance.KnowledgePool.TryGetValue("Server-Ping-Rate", out TimeSpan rate);
-            this.TickDelay = rate;
+            Anima.Instance.KnowledgePool.TryGetValue("Server-Ping-Rate", out int rate);
+            this.TickDelay = TimeSpan.FromSeconds(rate);
 
             Anima.Instance.KnowledgePool.TryGetValue("Server-IP", out string IP);
-            serverAddress =  IPAddress.Parse(IP);
+            if (!string.IsNullOrWhiteSpace(IP))
+            {
+                serverAddress = IPAddress.Parse(IP);
+            }
+            else
+            {
+                serverAddress = Dns.GetHostAddresses(Dns.GetHostName()).First();
+                Anima.Instance.ErrorStream.WriteLine($"Using default host IP");
+            }
 
             Anima.Instance.KnowledgePool.TryGetValue("Server-Port", out int Port);
             this.port = Port;
@@ -63,6 +71,7 @@ namespace RelayClient
                 {
                     messageReference.Add(m);
                     var nm = Anima.Deserialize<NetMessage>(m.Value);
+                    Anima.Instance.WriteLine($"Sending from: {m.Sender}");
                     serverPayload.Add(nm);
                 }
                 catch (Exception e)
@@ -77,11 +86,14 @@ namespace RelayClient
             var payload = serverPayload.ToArray();
             var serializedPayload = Anima.Serialize(payload);
             var tcpClient = Helper.TryConnectClient(serverAddress, port);
+            Anima.Instance.WriteLine($"Tried to connect: {tcpClient}");
             var t = Helper.TrySendMessage(tcpClient, serializedPayload);
+            Anima.Instance.WriteLine($"Sent off: {t.Status}");
             t.Wait();
-
+            Anima.Instance.WriteLine($"It's done: {t.Status}, {t.Result}");
             if (!t.Result.Item1)
             {
+                Anima.Instance.WriteLine($"Couldn't send messages, saving them for later: {t.Result}, {t.Status}");
                 //If we couldn't send them, we need to put them back for later
                 foreach (var msg in messageReference)
                 {
@@ -91,7 +103,9 @@ namespace RelayClient
             }
 
             var replyReader = new StreamReader(tcpClient.GetStream());
+            Anima.Instance.WriteLine($"Waiting for reply: {replyReader}");
             var reply = Helper.ReadFromStreamUntilEnd(replyReader);
+            Anima.Instance.WriteLine($"Got: {reply} in reply");
             var messageQueue = Anima.Deserialize<Queue<NetMessage>>(reply);
 
             foreach (var message in messageQueue)

@@ -57,12 +57,17 @@ namespace RelayServer
 
                     if (AnyGetRequests)
                     {
+                        Anima.Instance.WriteLine("Sending reply with info");
                         if (relayBuffer.ContainsKey(netMessages.First().SendHost))
                         {
                             string Messages = Anima.Serialize(relayBuffer[netMessages.First().SendHost]);
                             
                             var replyStrem = new StreamWriter(client.GetStream());
                             replyStrem.WriteLine(Messages);
+                        }
+                        else
+                        {
+                            Anima.Instance.WriteLine($"No messages for: {netMessages.First().SendHost}");
                         }
                     }
 
@@ -88,6 +93,10 @@ namespace RelayServer
                 catch (SocketException se)
                 {
                     if (se.SocketErrorCode == SocketError.AddressFamilyNotSupported)
+                    {
+                        Anima.Instance.ErrorStream.WriteLine(se.Message);
+                    }
+                    else
                     {
                         Anima.Instance.ErrorStream.WriteLine(se.Message);
                     }
