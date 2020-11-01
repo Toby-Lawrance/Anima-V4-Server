@@ -62,6 +62,12 @@ namespace RelayServer
                     if (AnyGetRequests)
                     {
                         Anima.Instance.WriteLine("Sending reply with info");
+                        var host = netMessages.First()?.SendHost;
+                        if (host is null)
+                        {
+                            Anima.Instance.WriteLine($"Unable to get send host name: {netMessages.Length}");
+                        }
+
                         if (relayBuffer.ContainsKey(netMessages.First().SendHost))
                         {
                             string Messages = Anima.Serialize(relayBuffer[netMessages.First().SendHost]);
