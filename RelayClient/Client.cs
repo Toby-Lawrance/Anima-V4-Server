@@ -88,11 +88,11 @@ namespace RelayClient
             var serializedPayload = Anima.Serialize(payload);
             //Anima.Instance.WriteLine($"About to try and send: {serializedPayload}");
             var tcpClient = Helper.TryConnectClient(serverAddress, port);
-            Anima.Instance.WriteLine($"Tried to connect: {tcpClient}");
+            //Anima.Instance.WriteLine($"Tried to connect: {tcpClient}");
             var t = Helper.TrySendMessage(tcpClient, serializedPayload);
-            Anima.Instance.WriteLine($"Sent off: {t.Status}");
+            //Anima.Instance.WriteLine($"Sent off: {t.Status}");
             t.Wait();
-            Anima.Instance.WriteLine($"It's done: {t.Status}, {t.Result}");
+            //Anima.Instance.WriteLine($"It's done: {t.Status}, {t.Result}");
             if (!t.Result.Item1)
             {
                 Anima.Instance.WriteLine($"Couldn't send messages, saving them for later: {t.Result}, {t.Status}");
@@ -105,9 +105,9 @@ namespace RelayClient
             }
 
             var replyReader = new StreamReader(tcpClient.GetStream());
-            Anima.Instance.WriteLine($"Waiting for reply: {replyReader}");
+            //Anima.Instance.WriteLine($"Waiting for reply: {replyReader}");
             var reply = Helper.ReadFromStreamUntilEnd(replyReader);
-            Anima.Instance.WriteLine($"Got: {reply} in reply");
+            //Anima.Instance.WriteLine($"Got: {reply} in reply");
             var messageQueue = Anima.Deserialize<Queue<NetMessage>>(reply);
 
             foreach (var message in messageQueue)

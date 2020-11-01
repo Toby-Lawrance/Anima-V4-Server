@@ -51,17 +51,13 @@ namespace RelayServer
 
                     string ReadContents = Helper.ReadFromStreamUntilEnd(strem);
 
-                    Anima.Instance.WriteLine($"Received this: {ReadContents}");
-
                     var netMessages = Anima.Deserialize<NetMessage[]>(ReadContents);
 
                     bool AnyGetRequests = netMessages.Any(nm => nm.GetRequest);
 
-                    Anima.Instance.WriteLine($"There is a Get request: {AnyGetRequests}");
 
                     if (AnyGetRequests)
                     {
-                        Anima.Instance.WriteLine("Sending reply with info");
                         var host = netMessages.First()?.SendHost;
                         if (host is null)
                         {
@@ -70,8 +66,7 @@ namespace RelayServer
 
                         if (relayBuffer.ContainsKey(netMessages.First().SendHost))
                         {
-                            string Messages = Anima.Serialize(relayBuffer[netMessages.First().SendHost]);
-                            Anima.Instance.WriteLine($"About to reply with: {Messages}");
+                            string Messages = Anima.Serialize(relayBuffer[host]);
                             var t = Helper.TrySendMessage(client, Messages);
                             t.Wait();
                             if (!t.Result.Item1)
@@ -80,7 +75,8 @@ namespace RelayServer
                             }
                             else
                             {
-                                Anima.Instance.WriteLine("Sent reply back");
+                                //Successfully sent reply. Can clear buffer
+                                relayBuffer[host].Clear();
                             }
                         }
                         else
