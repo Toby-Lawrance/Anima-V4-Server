@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Anima-V4\Anima.Core\Anima.Core.csproj" />
-    <ProjectReference Include="..\NetworkCore\NetworkCore.csproj" />
   </ItemGroup>
 
 </Project>

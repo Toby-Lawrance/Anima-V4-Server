@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anima.Core", "Anima-V4\Anim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelayClient", "RelayClient\RelayClient.csproj", "{B95B90A2-A509-48FB-A300-EDDFCBB170AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkCore", "NetworkCore\NetworkCore.csproj", "{684E6107-2CFE-4FC7-8783-4B7FB254A2FC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{B95B90A2-A509-48FB-A300-EDDFCBB170AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B95B90A2-A509-48FB-A300-EDDFCBB170AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B95B90A2-A509-48FB-A300-EDDFCBB170AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{684E6107-2CFE-4FC7-8783-4B7FB254A2FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{684E6107-2CFE-4FC7-8783-4B7FB254A2FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{684E6107-2CFE-4FC7-8783-4B7FB254A2FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{684E6107-2CFE-4FC7-8783-4B7FB254A2FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
