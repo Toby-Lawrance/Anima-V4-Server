@@ -51,9 +51,13 @@ namespace RelayServer
 
                     string ReadContents = Helper.ReadFromStreamUntilEnd(strem);
 
+                    Anima.Instance.WriteLine($"Received this: {ReadContents}");
+
                     var netMessages = Anima.Deserialize<NetMessage[]>(ReadContents);
 
                     bool AnyGetRequests = netMessages.Any(nm => nm.GetRequest);
+
+                    Anima.Instance.WriteLine($"There is a Get request: {AnyGetRequests}");
 
                     if (AnyGetRequests)
                     {
