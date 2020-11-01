@@ -24,7 +24,7 @@ namespace RelayServer
             base.Init();
             var succ = Anima.Instance.KnowledgePool.TryInsertValue("Server-Port", 0);
 
-            if (!succ)
+            if (succ)
             {
                 Anima.Instance.WriteLine("Added concept of Server-Port to pool, likely needs to be set");
             }

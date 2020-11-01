@@ -22,17 +22,17 @@ namespace RelayClient
             var succ = Anima.Instance.KnowledgePool.TryInsertValue("Server-Port", 0);
             var succ2 = Anima.Instance.KnowledgePool.TryInsertValue("Server-IP", "");
             var succ3 = Anima.Instance.KnowledgePool.TryInsertValue("Server-Ping-Rate", TimeSpan.FromSeconds(5));
-            if (!succ)
+            if (succ)
             {
                 Anima.Instance.WriteLine("Added concept of Server-Port to pool, likely needs to be set");
             }
 
-            if (!succ2)
+            if (succ2)
             {
                 Anima.Instance.WriteLine("Added concept of Server-IP to pool, likely needs to be set");
             }
 
-            if (!succ3)
+            if (succ3)
             {
                 Anima.Instance.WriteLine("Added concept of Server-Ping-Rate to pool, likely needs to be set");
             }
