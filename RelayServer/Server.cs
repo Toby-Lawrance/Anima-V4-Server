@@ -71,9 +71,17 @@ namespace RelayServer
                         if (relayBuffer.ContainsKey(netMessages.First().SendHost))
                         {
                             string Messages = Anima.Serialize(relayBuffer[netMessages.First().SendHost]);
-                            
-                            var replyStrem = new StreamWriter(client.GetStream());
-                            replyStrem.WriteLine(Messages);
+                            Anima.Instance.WriteLine($"About to reply with: {Messages}");
+                            var t = Helper.TrySendMessage(client, Messages);
+                            t.Wait();
+                            if (!t.Result.Item1)
+                            {
+                                Anima.Instance.ErrorStream.WriteLine("Was unable to send reply");
+                            }
+                            else
+                            {
+                                Anima.Instance.WriteLine("Sent reply back");
+                            }
                         }
                         else
                         {

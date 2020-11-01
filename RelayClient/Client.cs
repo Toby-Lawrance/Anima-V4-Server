@@ -72,7 +72,7 @@ namespace RelayClient
                 {
                     messageReference.Add(m);
                     var nm = Anima.Deserialize<NetMessage>(m.Value);
-                    Anima.Instance.WriteLine($"Sending from: {m.Sender}, {Anima.Serialize(nm)}");
+                    //Anima.Instance.WriteLine($"Sending from: {m.Sender}, {Anima.Serialize(nm)}");
                     serverPayload.Add(nm);
                 }
                 catch (Exception e)
@@ -86,7 +86,7 @@ namespace RelayClient
 
             var payload = serverPayload.ToArray();
             var serializedPayload = Anima.Serialize(payload);
-            Anima.Instance.WriteLine($"About to try and send: {serializedPayload}");
+            //Anima.Instance.WriteLine($"About to try and send: {serializedPayload}");
             var tcpClient = Helper.TryConnectClient(serverAddress, port);
             Anima.Instance.WriteLine($"Tried to connect: {tcpClient}");
             var t = Helper.TrySendMessage(tcpClient, serializedPayload);
